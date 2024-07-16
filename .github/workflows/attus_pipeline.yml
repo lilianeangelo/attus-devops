@@ -1,0 +1,90 @@
+# CI/CD Workflow for ATTUS Challenge
+name: CI/CD Pipeline ATTUS DevOps
+
+on:
+  push:
+    branches: [ "feat" ]
+  pull_request:
+    branches: [ "feat" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+### Docker-compose do DB caso pensar em integrá-lo
+    - name: Build and Push Docker Compose
+      working-directory: aplicacao-teste
+      run: |
+        docker-compose build \
+          --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+          --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+        docker-compose push
+
+### Construção da Imagem do Front-end
+    - name: Build and push front-end Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: aplicacao-teste/teste-front
+        file: aplicacao-teste/teste-front/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
+
+#### Construção da Imagem do Back-end
+    - name: Build and push back-end Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: aplicacao-teste/teste-back
+        file: aplicacao-teste/teste-back/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/back-end:latest
+        
+#### Subida dos container localhost:8080
+    - name: Run back-end container
+      working-directory: aplicacao-teste
+      run: |
+        docker-compose up -d back-end
+        sleep 10
+        
+#### Subida do Container localhost:3000
+    - name: Run front-end container
+      working-directory: aplicacao-teste
+      run: |
+        docker-compose up -d front-end
+        sleep 10
+
+### Front-end Testes
+### Esperando subida do front para que seja realizado o teste básico
+    - name: Wait for front-end to be ready
+      working-directory: aplicacao-teste
+      run: |
+        for i in {1..30}; do
+          curl -f http://localhost:3000 && break
+          echo "Waiting for front-end to be ready..."
+          sleep 5
+        done || (docker-compose logs front-end && exit 1)
+
+### Execução do curl dentro do container para avaliar disponibilidade do front
+    - name: Basic front-end test
+      run: |
+        response=$(curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:3000)
+        if [ "$response" -ne 200 ]; then
+          echo "Front-end test failed with status code $response"
+          exit 1
+        else
+          echo "Front-end test passed with status code $response"
+        fi
