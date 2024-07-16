@@ -1,4 +1,4 @@
-FROM maven:3.8.5-openjdk-17 AS build
+FROM maven:3.8.5-openjdk-24 AS build
 
 LABEL author="Liliane Angelo"
 
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package
 
 # run app image
-FROM openjdk:17-jdk-slim
+FROM openjdk:24-jdk-slim
 
 WORKDIR /app
 
