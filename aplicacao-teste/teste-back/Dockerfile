@@ -4,6 +4,8 @@ LABEL author="Liliane Angelo"
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y curl
+
 COPY pom.xml .
 RUN mvn dependency:go-offline
 

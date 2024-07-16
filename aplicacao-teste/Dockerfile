@@ -2,6 +2,9 @@ FROM postgres:latest
 
 LABEL author="Liliane Angelo"
 
+RUN apt-get update && apt-get install -y curl
+
+
 ARG POSTGRES_DB
 ARG POSTGRES_USER
 ARG POSTGRES_PASSWORD

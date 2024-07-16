@@ -6,6 +6,8 @@ WORKDIR /teste-front
 
 COPY package*.json ./
 
+RUN apt-get update && apt-get install -y curl
+
 RUN npm install
 
 RUN ls -la /teste-front/node_modules
