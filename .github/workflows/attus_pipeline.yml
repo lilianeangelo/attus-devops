@@ -24,14 +24,22 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Build and Push Docker Compose
+      run: |
+        docker-compose build \
+          --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+          --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+        docker-compose push
 
-    # - name: Build and push front-end Docker image
-    #   uses: docker/build-push-action@v4
-    #   with:
-    #     context: aplicacao-teste/teste-front
-    #     file: aplicacao-teste/teste-front/Dockerfile
-    #     push: true
-    #     tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
+    - name: Build and push front-end Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: aplicacao-teste/teste-front
+        file: aplicacao-teste/teste-front/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
 
     - name: Build and push back-end Docker image
       uses: docker/build-push-action@v3
