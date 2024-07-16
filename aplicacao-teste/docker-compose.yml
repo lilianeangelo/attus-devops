@@ -12,9 +12,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    # command: npm run serve
-    # networks:
-    #   - app-network
+    command: npm run serve
+    networks:
+      - app-network
 
   back-end:
     container_name: java-app
