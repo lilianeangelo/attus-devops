@@ -41,20 +41,6 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/back-end:latest
 
-    - name: Build and push db Docker image
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        file: ./Dockerfile.db
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/db:latest
-
-    - name: Run db container
-      run: |
-        docker run -d -p 5432:5432 --name db ${{ secrets.DOCKER_USERNAME }}/db:latest
-        sleep 10
-        docker exec db pg_isready -U user || exit 1
-
     - name: Run back-end container
       run: |
         docker run -d -p 8080:8080 --name back-end --link db ${{ secrets.DOCKER_USERNAME }}/back-end:latest
