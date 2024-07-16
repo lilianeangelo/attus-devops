@@ -26,6 +26,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and Push Docker Compose
+      working-directory: aplicacao-teste
       run: |
         docker-compose build \
           --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
