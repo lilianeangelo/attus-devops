@@ -1,0 +1,54 @@
+#CI/CD Workflow for ATTUS Challenge
+name: CI/CD Pipeline ATTUS DevOps
+
+on:
+  push:
+    branches: [ "feat" ]
+  pull_request:
+    branches: [ "feat" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # - name: Build and push front-end Docker image
+    #   uses: docker/build-push-action@v4
+    #   with:
+    #     context: aplicacao-teste/teste-front
+    #     file: aplicacao-teste/teste-front/Dockerfile
+    #     push: true
+    #     tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
+
+    - name: Build and push back-end Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: aplicacao-teste/teste-back
+        file: aplicacao-teste/teste-back/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/back-end:latest
+
+    - name: Run back-end container
+      run: |
+        docker run -d -p 8080:8080 --name back-end --link db ${{ secrets.DOCKER_USERNAME }}/back-end:latest
+        sleep 10
+        curl -f http://localhost:8080 || exit 1
+
+    - name: Run front-end container
+      run: |
+        docker run -d -p 3000:3000 --name front-end --link back-end ${{ secrets.DOCKER_USERNAME }}/front-end:latest
+        sleep 10
+        curl -f http://localhost:3000 || exit 1
