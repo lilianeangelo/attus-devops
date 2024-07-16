@@ -1,15 +1,15 @@
 # ATTUS-DEVOPS
 
-Projeto de Criação de Pipeline para aplicação Web de Login em NodeJS
+Projeto de Criação de Pipeline para Aplicação Web de Login em NodeJS.
 
-
+### Estrutura do Projeto
+```
 /aplicacao-teste
 │
 ├── front-end
 │   ├── Dockerfile
 │   ├── package.json
 │   ├── package-lock.json
-|   |
 │   └── src
 │       └── (código da aplicação)
 ├── teste-back
@@ -19,6 +19,7 @@ Projeto de Criação de Pipeline para aplicação Web de Login em NodeJS
 │       └── (código da aplicação)
 ├── docker-compose.yml
 └── logs
+```
 
 http://localhost:3000/ 
 
