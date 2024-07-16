@@ -25,6 +25,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+### Docker-compose do DB caso pensar em integrá-lo
     - name: Build and Push Docker Compose
       working-directory: aplicacao-teste
       run: |
@@ -34,6 +35,7 @@ jobs:
           --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
         docker-compose push
 
+### Construção da Imagem do Front-end
     - name: Build and push front-end Docker image
       uses: docker/build-push-action@v4
       with:
@@ -42,6 +44,7 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
 
+#### Construção da Imagem do Back-end
     - name: Build and push back-end Docker image
       uses: docker/build-push-action@v4
       with:
@@ -49,28 +52,23 @@ jobs:
         file: aplicacao-teste/teste-back/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/back-end:latest
-
+        
+#### Subida dos container localhost:8080
     - name: Run back-end container
       working-directory: aplicacao-teste
       run: |
         docker-compose up -d back-end
         sleep 10
-
-    # - name: Wait for back-end to be ready
-    #   working-directory: aplicacao-teste
-    #   run: |
-    #     for i in {1..30}; do
-    #       curl -f http://localhost:8080 && break
-    #       echo "Waiting for back-end to be ready..."
-    #       sleep 5
-    #     done || (docker-compose logs back-end && exit 1)
-
+        
+#### Subida do Container localhost:3000
     - name: Run front-end container
       working-directory: aplicacao-teste
       run: |
         docker-compose up -d front-end
         sleep 10
 
+### Front-end Testes
+### Esperando subida do front para que seja realizado o teste básico
     - name: Wait for front-end to be ready
       working-directory: aplicacao-teste
       run: |
@@ -80,6 +78,7 @@ jobs:
           sleep 5
         done || (docker-compose logs front-end && exit 1)
 
+### Execução do curl dentro do container para avaliar disponibilidade do front
     - name: Basic front-end test
       run: |
         response=$(curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:3000)
@@ -89,13 +88,3 @@ jobs:
         else
           echo "Front-end test passed with status code $response"
         fi
-
-    # - name: Basic back-end test
-    #   run: |
-    #     response=$(curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:8080)
-    #     if [ "$response" -ne 200 ]; then
-    #       echo "Back-end test failed with status code $response"
-    #       exit 1
-    #     else
-    #       echo "Back-end test passed with status code $response"
-    #     fi
