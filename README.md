@@ -43,13 +43,14 @@ Front-end: [http://localhost:3000](http://localhost:3000)
 
 
 ### Build 🛠️
-
+\n
 
 #### BACK-END
 ##### Project Setup
 ```
 mvn clean package
 ```
+\n
 
 #### FRONT-END
 ##### Project Setup
@@ -71,6 +72,7 @@ npm run lint
 #### #Configuração customizada
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+\n
 ### Docker ![Docker](https://img.shields.io/badge/-Docker-white?style=flat-square&logo=docker)
 
 Como citado anteriormente, cada parte do projeto possui um Dockerfile específico para a criação das suas imagens.
