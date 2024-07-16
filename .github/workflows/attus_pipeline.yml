@@ -29,7 +29,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: aplicacao-teste/teste-front
-        file: .aplicacao-teste/teste-front/Dockerfile
+        file: aplicacao-teste/teste-front/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
 
