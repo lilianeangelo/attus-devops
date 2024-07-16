@@ -52,16 +52,29 @@ jobs:
 
     - name: Run back-end container
       run: |
-        docker run -d -p 8080:8080 --name aplicacao-teste-back-end ${{ secrets.DOCKER_USERNAME }}/back-end:latest
+        docker-compose up -d back-end
         sleep 10
-        docker ps
-        curl -f http://localhost:8080 || (docker logs aplicacao-teste-back-end && exit 1)
+
+    - name: Wait for back-end to be ready
+      run: |
+        for i in {1..30}; do
+          curl -f http://localhost:8080 && break
+          echo "Waiting for back-end to be ready..."
+          sleep 5
+        done || (docker-compose logs back-end && exit 1)
 
     - name: Run front-end container
       run: |
-        docker run -d -p 3000:3000 --name front-end --link aplicacao-teste-back-end ${{ secrets.DOCKER_USERNAME }}/front-end:latest
+        docker-compose up -d front-end
         sleep 10
-        curl -f http://localhost:3000 || exit 1
+
+    - name: Wait for front-end to be ready
+      run: |
+        for i in {1..30}; do
+          curl -f http://localhost:3000 && break
+          echo "Waiting for front-end to be ready..."
+          sleep 5
+        done || (docker-compose logs front-end && exit 1)
 
     - name: Basic front-end test
       run: |
