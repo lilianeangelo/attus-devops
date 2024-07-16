@@ -71,7 +71,7 @@ npm run lint
 #### #Configuração customizada
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Docker 
+### Docker ![Docker](https://img.shields.io/badge/-Docker-black?style=flat-square&logo=docker)
 
 Como citado anteriormente, cada parte do projeto possui um Dockerfile específico para a criação das suas imagens.
 Cada Dockerfile tem o objetivo de criar a imagem com base em suas especificações a seguir:
