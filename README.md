@@ -69,7 +69,8 @@ npm run build
 ```
 npm run lint
 ```
-#### #Configuração customizada
+
+#####Configuração customizada
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
