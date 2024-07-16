@@ -28,16 +28,16 @@ jobs:
     - name: Build and push front-end Docker image
       uses: docker/build-push-action@v3
       with:
-        context: ./teste-front
-        file: ./teste-front/Dockerfile
+        context: ./aplicacao-teste/teste-front
+        file: ./aplicacao-teste/teste-front/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/front-end:latest
 
     - name: Build and push back-end Docker image
       uses: docker/build-push-action@v3
       with:
-        context: ./teste-back
-        file: ./teste-back/Dockerfile
+        context: ./aplicacao-teste/teste-back
+        file: ./aplicacao-teste/teste-back/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/back-end:latest
 
