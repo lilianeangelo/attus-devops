@@ -298,8 +298,12 @@ ________________________________________________________________________________
 ##### Comando de execução:
 Assim, definido os parâmetros de criação do container, execute o comando abaixo:
 ```
-docker-compose up
+docker-compose up --build
 ```
+* docker-compose: comando para construir o container do serviço;
+* up: comando para subir o serviço;
+* --build: criar a partir das configurações de imagem do Dockerfile forcçando reconstrução das imagens.
+
 
 ## CI/CD :basecamp: 
 
